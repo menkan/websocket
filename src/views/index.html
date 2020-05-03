@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>weChat3.0</title>
+  <link rel="stylesheet" href="css/index.css" />
+</head>
+<body>
+  <!-- Welcome to Wechat3.0 -->
+  <noscript>您的浏览器暂不支持该聊天室功能; 请更换浏览器尝试、感谢您的支持</noscript>
+  <div id="app">
+    <div class="login_box" v-if="!isLogin">
+      <h3>用户登录</h3>
+      <p>用户名</p>
+      <input type="text" v-model="username" placeholder="请输入用户名" id="username" />
+      <p>选择头像</p>
+      <ul class="avatar" id="login_avatar">
+        <li v-for="(imgName, index) in [].length = 53" :class="[headIndex === index + 1 ? 'now' : '']" :key="imgName" @click="handleClickHead(imgName)"><img :src="checkImgName(index)" alt="" /></li>
+      </ul>
+      <button class="weui-btn" @click="handleLogin">登录</button>
+    </div>
+    <div class="container" v-else="isLogin">
+      <!-- 用户列表 -->
+      <div class="user-list">
+        <div class="header">
+          <div class="avatar">
+            <img class="img avatar_url" :src="headPiecePath" alt="" />
+          </div>
+          <div class="info">
+            <h3 class="username">{{ username }}</h3>
+          </div>
+        </div>
+        <div class="title"><h3>用户列表</h3></div>
+        <ul v-if="usersList.length">
+         <!-- <silieUserList v-for="item in usersList" :info="item" :key="item.username" /> -->
+          <li class="user" v-for="item in usersList" :key="item.username">
+            <div class="avatar"><img :src="item.headPiecePath" alt="" /></div>
+            <div class="name">{{ item.username }}</div>
+          </li>
+        </ul>
+      </div>
+      <!-- 聊天主窗口 -->
+      <div class="box">
+        <!-- 聊天窗口头部 -->
+        <div class="box-hd"><h3>聊天室(<span id="userCount">{{ usersCount }}</span>)</h3></div>
+
+        <!-- 聊天窗口主体区域 -->
+        <div class="box-bd">
+          <div v-for="(item, index) in msgList" :key="index">
+            <div v-if="item.type === '0001'" class="system">
+              <p class="message_system">
+                <span class="content">{{ item.message }}</span>
+              </p>
+            </div>
+            <div v-if="item.type === '0002'" class="message-box">
+              <div class="my message">
+                <img class="avatar" :src="item.headPiecePath" alt="" />
+                <div class="content">
+                  <div class="bubble">
+                    <div class="bubble_cont">{{ item.message }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div v-if="item.type === '0003'" class="message-box">
+              <div class="other message">
+                <img class="avatar" :src="item.headPiecePath" alt="" />
+                <div class="content">
+                  <div class="nickname">{{ item.username }}</div>
+                  <div class="bubble">
+                    <div class="bubble_cont">{{ item.message }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+      </div>
+        <div class="box-ft">
+          <!-- <div class="toolbar">
+            <a href="javascript:;" title="表情" class="face"></a>
+            <a href="javascript:;" title="截屏" class="screen-cut">
+            </a>
+            <a href="javascript:;" title="图片" class="file">
+              <label for="file"></label>
+              <input type="file" id="file" style="display: none;">
+            </a>
+          </div> -->
+          <!-- 内容输入区域 -->
+          <div class="content">
+            <!-- div添加一个属性：contenteditable -->
+            <textarea class="text" v-model='inputText' id="content"></textarea>
+          </div>
+          <!-- 发送按钮 -->
+          <div class="action" @click="handleSendMsg">
+            <span class="desc">按下Ctrl+Enter发送</span>
+            <a class="btn-send" id="btn-send" href="javascript:;">发送</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/index.js"></script>
+</body>
+</html>

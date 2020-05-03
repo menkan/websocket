@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>model WeChat</title>
+  <style>
+    .msg-list {
+      height: 300px;
+      width: 200px;
+      border: 1px solid #000;
+    }
+  </style>
+</head>
+<body>
+ <h1>Welcome wechat!</h1> 
+
+ <input type="text">
+ <button>Send</button>
+ <ul class="msg-list"></ul>
+ <script>
+  /*
+   基于H5 websocket 实现websocket调用 
+  */
+  let input = document.querySelector('input[type=text]') 
+  let button = document.querySelector('button')
+  let msgBox = document.querySelector('ul')
+  
+  
+  // add itme in msgBox
+  function addOneMsg(msg) {
+    let itm = document.createElement('LI')
+    itm.innerHTML = msg
+    msgBox.appendChild(itm)
+    input.value = ''
+  }
+
+  //  websocket
+  let socket = new WebSocket('ws://localhost:3001')
+
+  socket.addEventListener('open', () => {
+    console.log('socket opened!!');
+    addOneMsg('opened server!')
+  })
+
+  socket.addEventListener('message', function(event) {
+    console.log('response Data:', event.data);
+    addOneMsg(event.data)
+  })
+
+  socket.addEventListener('error', function(event) {
+    console.log('Error: connect not internet!', event);
+  })
+  
+  socket.addEventListener('close', function(event) {
+    console.log('connection closed!', event);
+  })
+  
+  button.addEventListener('click', function() {
+    let localMsg = input.value
+    console.log(`socket Status: `, socket.readyState);
+    let socketStatus = socket.readyState
+    if(socketStatus === 1) {
+      socket.send(localMsg)
+    } else {
+      addOneMsg('由于连接中断、请检查网络或联系网络管理员')
+    }
+    input.value = ''
+  })
+
+ </script>
+</body>
+</html>
