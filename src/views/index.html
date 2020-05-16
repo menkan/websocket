@@ -1,105 +1,131 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="wechat, room, chat, wechat room, chat room">
   <title>weChat3.0</title>
   <link rel="stylesheet" href="css/index.css" />
 </head>
+
 <body>
   <!-- Welcome to Wechat3.0 -->
   <noscript>您的浏览器暂不支持该聊天室功能; 请更换浏览器尝试、感谢您的支持</noscript>
-  <div id="app">
-    <div class="login_box" v-if="!isLogin">
-      <h3>用户登录</h3>
-      <p>用户名</p>
-      <input type="text" v-model="username" placeholder="请输入用户名" id="username" />
-      <p>选择头像</p>
-      <ul class="avatar" id="login_avatar">
-        <li v-for="(imgName, index) in [].length = 53" :class="[headIndex === index + 1 ? 'now' : '']" :key="imgName" @click="handleClickHead(imgName)"><img :src="checkImgName(index)" alt="" /></li>
-      </ul>
-      <button class="weui-btn" @click="handleLogin">登录</button>
-    </div>
-    <div class="container" v-else="isLogin">
-      <!-- 用户列表 -->
-      <div class="user-list">
-        <div class="header">
-          <div class="avatar">
-            <img class="img avatar_url" :src="headPiecePath" alt="" />
-          </div>
-          <div class="info">
-            <h3 class="username">{{ username }}</h3>
-          </div>
-        </div>
-        <div class="title"><h3>用户列表</h3></div>
-        <ul v-if="usersList.length">
-         <!-- <silieUserList v-for="item in usersList" :info="item" :key="item.username" /> -->
-          <li class="user" v-for="item in usersList" :key="item.username">
-            <div class="avatar"><img :src="item.headPiecePath" alt="" /></div>
-            <div class="name">{{ item.username }}</div>
-          </li>
+  <div id="root">
+
+    <!-- login chat room -->
+    <div id="login-box" class="login-box" v-if="!isLogin">
+      <h3 class="login-box__title">Login Chat Room</h3>
+      <div class="line-item">
+        <div class="login-box__sub-title">username</div>
+        <!--  value="xvT0Aq2e" -->
+        <input type="text" v-model="username" placeholder="请输入用户名" id="username" />
+      </div>
+      <div class="line-item">
+        <div class="login-box__sub-title">choose head</div>
+        <ul class="login-box__head-box">
+          <li v-for="(imgName, index) in [].length = 53" :class="[headIndex === index + 1 ? 'activity' : '']" :key="imgName" @click="handleClickHead(imgName)"><img :src="checkImgName(index)" alt="" /></li>
         </ul>
       </div>
-      <!-- 聊天主窗口 -->
-      <div class="box">
-        <!-- 聊天窗口头部 -->
-        <div class="box-hd"><h3>聊天室(<span id="userCount">{{ usersCount }}</span>)</h3></div>
+      <button class="login-box__btn" @click="handleLogin">登录</button>
+    </div>
 
-        <!-- 聊天窗口主体区域 -->
-        <div class="box-bd">
-          <div v-for="(item, index) in msgList" :key="index">
-            <div v-if="item.type === '0001'" class="system">
-              <p class="message_system">
-                <span class="content">{{ item.message }}</span>
-              </p>
-            </div>
-            <div v-if="item.type === '0002'" class="message-box">
-              <div class="my message">
-                <img class="avatar" :src="item.headPiecePath" alt="" />
-                <div class="content">
-                  <div class="bubble">
-                    <div class="bubble_cont">{{ item.message }}</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div v-if="item.type === '0003'" class="message-box">
-              <div class="other message">
-                <img class="avatar" :src="item.headPiecePath" alt="" />
-                <div class="content">
-                  <div class="nickname">{{ item.username }}</div>
-                  <div class="bubble">
-                    <div class="bubble_cont">{{ item.message }}</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-        </div>
-      </div>
-        <div class="box-ft">
-          <!-- <div class="toolbar">
-            <a href="javascript:;" title="表情" class="face"></a>
-            <a href="javascript:;" title="截屏" class="screen-cut">
-            </a>
-            <a href="javascript:;" title="图片" class="file">
-              <label for="file"></label>
-              <input type="file" id="file" style="display: none;">
-            </a>
-          </div> -->
-          <!-- 内容输入区域 -->
-          <div class="content">
-            <!-- div添加一个属性：contenteditable -->
-            <textarea class="text" v-model='inputText' id="content"></textarea>
+    <!-- Chat room -->
+    <div class="chat-room" v-else>
+      <div class="side-box">
+        <div class="myself-box">
+          <div class="myself-box__head">
+            <img :src="headPiecePath" alt="">
           </div>
-          <!-- 发送按钮 -->
-          <div class="action" @click="handleSendMsg">
-            <span class="desc">按下Ctrl+Enter发送</span>
-            <a class="btn-send" id="btn-send" href="javascript:;">发送</a>
+          <div class="myself-box__usernaem">{{ username }}</div>
+        </div>
+        <div class="side-online">
+          <div></div>
+        </div>
+        <ul class="chat-room-list">
+          <li v-if="usersList.length" class="chat-item" v-for="item in usersList" :key="item.username">
+            <div class="room__head">
+              <img :src="item.headPiecePath" alt="" />
+            </div>
+            <div class="room__title">{{ item.username }}</div>
+          </li>
+          <!-- 房间组合多人聊天 -->
+          <!-- <li class="chat-item multipeople">
+            <div class="room__head">
+              <img src="./images/head-piece-011.jpg" alt="">
+              <img src="./images/head-piece-012.jpg" alt="">
+              <img src="./images/head-piece-013.jpg" alt="">
+              <img src="./images/head-piece-014.jpg" alt="">
+              <img src="./images/head-piece-011.jpg" alt="">
+              <img src="./images/head-piece-012.jpg" alt="">
+              <img src="./images/head-piece-013.jpg" alt="">
+              <img src="./images/head-piece-014.jpg" alt="">
+            </div>
+            <div class="room__title">multipeople room</div>
+          </li> -->
+        </ul>
+      </div>
+
+      <!-- chat list -->
+      <div class="chat-panel">
+        <div class="chat-panel__title">
+          <h4>Chat Room (<span id="userCount">{{ usersCount }}</span>)</h4>
+        </div>
+        <div class="chat-panel__context">
+          <div v-for="(item, index) in msgList" :key="index">
+            <div class="system-message" v-if="item.type === '0001'" class="system">
+              <p>{{ item.message }}</p>
+            </div>
+            <div v-if="item.type === '0003'" class="message someone-message">
+              <div class="head-box">
+                <img :src="item.headPiecePath" alt="">
+              </div>
+              <div class="msg-box--wp">
+                <p>{{ item.username }}</p>
+                <div class="msg-box">
+                  <span>{{ item.message }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="message myself-message" v-if="item.type === '0002'" class="message-box">
+              <div class="msg-box">
+                <span>{{ item.message }}</span>
+              </div>
+              <div class="head-box">
+                <img :src="item.headPiecePath" alt="">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="chat-panel__input">
+          <div class="chat-panel__input__property-group">
+            <div class="property-item face">
+              <!-- face -->
+            </div>
+            <div class="property-item screen-cut"></div>
+            <div class="property-item file">
+              <label for="files"></label>
+              <input type="file" name="" id="files" hidden>
+            </div>
+          </div>
+          <div class="chat-panel__input__keyword-box">
+            <!-- div 属性 contenteditable 可以书写内容-->
+            <!-- 如果用表情、图片等内容的话就不能采用textarea标签; 需要用dev[contenteditable]内容 -->
+            <textarea v-model='inputText' id="textarea"></textarea>
+          </div>
+          <div class="chat-panel__input__send-box">
+            <div class="tips">Enter Send Msg</div>
+            <button  @click="handleSendMsg" class="btn">发送</button>
           </div>
         </div>
       </div>
     </div>
   </div>
+  <!-- created by xutongze(menkan) on 2020/05/10  -->
+  <!-- 
+    一、于2020/05/13晚结束基础部分
+   -->
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script src="js/index.js"></script>

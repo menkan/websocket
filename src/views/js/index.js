@@ -2,7 +2,7 @@ const TYPE_SYSTEM = '0001'
 const TYPE_MYSEFY = '0002'
 const TYPE_OTHER = '0003'
 new Vue({
-  el: '#app',
+  el: '#root',
   data: {
     isLogin: false,
     username: '',
@@ -96,7 +96,7 @@ new Vue({
   watch: {
     msgList() {
       this.$nextTick(() => {
-        let container = this.$el.querySelector(".box-bd");
+        let container = this.$el.querySelector(".chat-panel__context");
         container.scrollTop = container.scrollHeight;
       });
     }
